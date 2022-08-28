@@ -1,5 +1,5 @@
 CFLAGS= -Wall -Werror
-CFLAGS+= $(shell pkg-config --cflags gtk4 cglm)
+CFLAGS+= $(shell pkg-config --cflags gtk4 cglm cairo)
 CFLAGS+= -I ../
 
 SOURCES=$(wildcard *.c) $(wildcard commands/*.c)

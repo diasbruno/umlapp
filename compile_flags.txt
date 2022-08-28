@@ -5,13 +5,7 @@
 -I
 /usr/include
 -I
-/usr/local/include
--I
-/usr/local/src/umlapp
--I
-/nix/store/08fck1mgascfv212zxl30zy7bs7h57hk-clang-11.1.0-lib/lib/clang/11.1.0/include
--I
-/nix/store/slzsc2n9p3kvfxwrinjacxic458b8bii-glibc-2.34-115-dev/include/
+/usr/include/x86_64-linux-gnu
 -I
 /nix/store/l3hzmppcf5vd3jilcd72400nkryfgw32-gtk4-4.6.4-dev/include/gtk-4.0
 -I
@@ -36,3 +30,7 @@
 /nix/store/h5g2gpvh3ksy9acmdqk70jzv4c4akf5k-pango-1.50.6-dev/include/pango-1.0
 -I
 /nix/store/75r6n833kinhs336dklh3w0svbpzckmk-harfbuzz-3.3.2-dev/include/harfbuzz
+-I
+/nix/store/mr2rjrxx2a9xcndw5js83g4ks8xvj4cr-cglm-0.8.5//nix/store/mr2rjrxx2a9xcndw5js83g4ks8xvj4cr-cglm-0.8.5/include
+-I
+/usr/local/src/umlapp
