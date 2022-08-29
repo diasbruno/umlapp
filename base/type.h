@@ -4,30 +4,15 @@
 #include <stdlib.h>
 #include <gdk/gdk.h>
 
+#include <geometry/frame.h>
+
 #define EXISTS(x) ((x) != NULL)
 
 typedef int element_kind_t;
 
-struct pos_t {
-  float x, y;
-};
-
-struct size_t {
-  float width, height;
-};
-
 struct line_t {
   int size;
   struct pos_t* ps;
-};
-
-struct frame_t {
-  struct pos_t pos;
-  struct size_t size;
-};
-
-struct object_t {
-  element_kind_t type;
 };
 
 struct mouse_click_t {

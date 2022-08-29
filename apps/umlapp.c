@@ -1,13 +1,20 @@
+#include <stdlib.h>
 #include <cairo.h>
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
-#include <sdk/application_state.h>
-#include <sdk/array.h>
-#include <sdk/commands/creation.h>
-#include <sdk/commands/selection.h>
-#include <sdk/drawing.h>
-#include <sdk/frame.h>
-#include <sdk/types.h>
+#include <collections/array.h>
+#include <geometry/frame.h>
+#include <render/drawing.h>
+#include <base/type.h>
+
+#include "./application_state.h"
+#include "./creation.h"
+#include "./selection.h"
+
+const gchar* const kKeyPress = (const gchar*)"key-pressed";
+const gchar* const kMotion = (const gchar*)"motion";
+const gchar* const kMousePress = (const gchar*)"pressed";
+const gchar* const kMousePressReleased = (const gchar*)"pressed";
 
 static struct application_t state = {
   .command = NULL,
@@ -67,7 +74,7 @@ static void motion(GtkEventControllerMotion* self,
 		   ) {
   struct application_t* s = (struct application_t*)state;
 
-  struct mouse_click_t press = {
+  struct mouse_click_t motion = {
     .n_press = 0,
     .x = x,
     .y = y,
@@ -75,7 +82,7 @@ static void motion(GtkEventControllerMotion* self,
   };
 
   if (EXISTS(s->command)) {
-    s->command->on_mouse_motion(s, &press);
+    s->command->on_mouse_motion(s, &motion);
   }
 }
 
@@ -99,13 +106,13 @@ static void mouse_pressed(GtkGestureClick *self,
 }
 
 static void mouse_released(GtkGestureClick *self,
-		     gint n_press,
-		     gdouble x,
-		     gdouble y,
-		     gpointer state) {
+			   gint n_press,
+			   gdouble x,
+			   gdouble y,
+			   gpointer state) {
   struct application_t* s = (struct application_t*)state;
 
-  struct mouse_click_t press = {
+  struct mouse_click_t released = {
     .n_press = n_press,
       .x = x,
       .y = y,
@@ -113,27 +120,32 @@ static void mouse_released(GtkGestureClick *self,
   };
 
   if (EXISTS(s->command)) {
-    s->command->on_mouse_released(s, &press);
+    s->command->on_mouse_released(s, &released);
   }
 }
 
 static void activate (GtkApplication *app, gpointer state) {
   struct application_t* s = (struct application_t*)state;
 
+  // create the main window
   GtkWidget *window = gtk_application_window_new (app);
 
+  // basic window settings
   gtk_window_set_title (GTK_WINDOW (window), "Window");
   gtk_window_set_default_size (GTK_WINDOW (window), 500, 400);
 
-  GtkWidget *area = gtk_drawing_area_new ();
+  // main drawing surface
+  GtkWidget *area = gtk_drawing_area_new();
   gtk_drawing_area_set_content_width (GTK_DRAWING_AREA (area), 500);
   gtk_drawing_area_set_content_height (GTK_DRAWING_AREA (area), 400);
   gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (area), draw_function, (gpointer)state, NULL);
 
+  // attach surface to window
   gtk_window_set_child (GTK_WINDOW (window), area);
 
   s->canvas = area;
 
+  // setup events and gestures, and, attach to the window
   GtkEventController *ec = gtk_event_controller_key_new();
   GtkEventController *mc = gtk_event_controller_motion_new();
   GtkGesture *click = gtk_gesture_click_new();
@@ -142,10 +154,11 @@ static void activate (GtkApplication *app, gpointer state) {
   gtk_widget_add_controller(window, mc);
   gtk_widget_add_controller(window, (GtkEventController*)click);
 
-  g_signal_connect(ec, "key-pressed", G_CALLBACK(key_pressed), (gpointer)state);
-  g_signal_connect(mc, "motion", G_CALLBACK(motion), (gpointer)state);
-  g_signal_connect(click, "pressed", G_CALLBACK(mouse_pressed), (gpointer)state);
-  g_signal_connect(click, "released", G_CALLBACK(mouse_released), (gpointer)state);
+  gpointer state_pointer = (gpointer)state;
+  g_signal_connect(ec, kKeyPress, G_CALLBACK(key_pressed), state_pointer);
+  g_signal_connect(mc, kMotion, G_CALLBACK(motion), state_pointer);
+  g_signal_connect(click, kMousePress, G_CALLBACK(mouse_pressed), state_pointer);
+  g_signal_connect(click, kMousePressReleased, G_CALLBACK(mouse_released), state_pointer);
 
   gtk_window_present (GTK_WINDOW (window));
 }
@@ -167,12 +180,6 @@ int main(int argc, char **argv) {
 
   register_creation_command_option(state.commands);
   register_selection_command_option(state.commands);
-
-  /* struct frame_t* f = NULL; */
-  /* f = frame_with_pos_size(50, 50, 100, 100); */
-  /* array_push(state.frames, f); */
-  /* f = frame_with_pos_size(350, 50, 100, 100); */
-  /* array_push(state.frames, f); */
 
   app = gtk_application_new ("org.gtk.umlapp", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (activate), (gpointer)&state);

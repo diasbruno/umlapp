@@ -34,3 +34,11 @@
 /nix/store/mr2rjrxx2a9xcndw5js83g4ks8xvj4cr-cglm-0.8.5//nix/store/mr2rjrxx2a9xcndw5js83g4ks8xvj4cr-cglm-0.8.5/include
 -I
 /usr/local/src/umlapp
+-I
+/usr/local/src/umlapp/base
+-I
+/usr/local/src/umlapp/collections
+-I
+/usr/local/src/umlapp/geometry
+-I
+/usr/local/src/umlapp/commands

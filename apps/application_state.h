@@ -2,9 +2,9 @@
 #define _01G3PNEYAV29ZYWS6PWQQQN5KK_ 1
 
 #include <gtk/gtk.h>
-#include <sdk/types.h>
-#include <sdk/array.h>
-#include <sdk/command_options.h>
+#include <base/type.h>
+#include <collections/array.h>
+#include <commands/command_options.h>
 
 typedef struct command_state_t* command_state_t;
 

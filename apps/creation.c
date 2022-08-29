@@ -1,15 +1,16 @@
-#include <sdk/application_state.h>
-#include <sdk/array.h>
-#include <sdk/commands/creation.h>
-#include <sdk/command_options.h>
-#include <sdk/frame.h>
+#include <collections/array.h>
+#include <geometry/frame.h>
+#include <commands/command_options.h>
+
+#include "./application_state.h"
+#include "./creation.h"
 
 static void
 init(struct application_t *s) {}
 
 static void finish(struct application_t *s) {}
 
-static void draw(struct application_t *s, cairo_t* cr) {}
+static void draw(struct application_t *s, void* cr) {}
 
 static void key_execute(struct application_t *s, void *data) {}
 

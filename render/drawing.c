@@ -1,6 +1,7 @@
-#include "cairo.h"
 #include <math.h>
-#include <sdk/drawing.h>
+#include <cairo.h>
+
+#include "./drawing.h"
 
 void draw_decision(cairo_t *cr, struct frame_t* frame) {
   const float x = frame->pos.x;
@@ -28,7 +29,7 @@ void draw_arrow(cairo_t *cr, struct line_t *ls) {
   cairo_line_to(cr, p.x, p.y);
   for (int x = 0; x < ls->size; x++) {
     struct pos_t l = ls->ps[x];
-    g_print("arrow %f %f\n", l.x, l.y);
+    printf("arrow %f %f\n", l.x, l.y);
     cairo_line_to(cr, l.x, l.y);
   }
 

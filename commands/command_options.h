@@ -1,12 +1,11 @@
 #ifndef _01G3PNB439F3BZPGR0R0VDF0YF_
 #define _01G3PNB439F3BZPGR0R0VDF0YF_ 1
 
-#include <cairo.h>
-#include <sdk/array.h>
+#include <collections/array.h>
 
 typedef struct application_t* application_t;
 
-typedef void (*command_option_draw_fn_t)(application_t s, cairo_t *cr);
+typedef void (*command_option_draw_fn_t)(application_t s, void *cr);
 typedef void (*command_option_init_fn_t)(application_t s);
 typedef void (*command_option_finish_fn_t)(application_t s);
 typedef void (*command_option_key_fn_t)(application_t s, void *data);

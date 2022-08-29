@@ -1,24 +1,28 @@
-CFLAGS= -Wall -Werror
-CFLAGS+= $(shell pkg-config --cflags gtk4 cglm cairo)
-CFLAGS+= -I ./
+PROJECTS=collections geometry commands render apps
 
-LDFLAGS = $(shell pkg-config --libs gtk4 cglm cairo)
-LDFLAGS+= -L./sdk libsdk.a
+TESTS=$(filter-out commands render,$(PROJECTS))
 
-libsdk.a:
-	make -C sdk -k all
+all: $(PROJECTS)
 
-umlapp:
-	make -C apps -k all
+define PROJECT_RULE
+.PHONY: $(1) test-$(1) clean-$(1)
+$(1):
+	make -C ./$(1) -k
 
-.DEFAULT_GOAL := all
+test-$(1):
+	make -C ./$(1) -k test
 
-all: libsdk.a umlapp
+run-test-$(1):
+	make -C ./$(1) -k run-test
 
-clean-apps:
-	make -C apps -k clean
+clean-$(1):
+	make -C ./$(1) -k clean
+endef
 
-clean-sdk:
-	make -C sdk -k clean
+$(foreach P,$(PROJECTS),$(eval $(call PROJECT_RULE,$(P))))
 
-clean-all: clean-sdk clean-apps clean
+test: all $(foreach T,$(TESTS),test-$(T))
+
+run-test: test $(foreach T,$(TESTS),run-test-$(T))
+
+clean: $(foreach P,$(PROJECTS),clean-$(P))

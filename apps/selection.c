@@ -1,9 +1,11 @@
-#include "cairo.h"
-#include <sdk/application_state.h>
-#include <sdk/array.h>
-#include <sdk/command_options.h>
-#include <sdk/frame.h>
-#include <sdk/types.h>
+#include <cairo.h>
+#include <base/type.h>
+#include <collections/array.h>
+#include <geometry/frame.h>
+#include <commands/command_options.h>
+
+#include "./application_state.h"
+#include "./selection.h"
 
 #define TO_SELECTION(x) ((struct selection_state_t*)(x))
 
@@ -27,7 +29,7 @@ static void finish(struct application_t *s) {
   free((struct selection_state_t*)s->command_state);
 }
 
-static void draw(struct application_t *s, cairo_t* cr) {
+static void draw(struct application_t *s, void* cr) {
   struct selection_state_t* c = TO_SELECTION(s->command_state);
 
   if (!EXISTS(c)) {
@@ -84,6 +86,23 @@ mouse_pressed_execute(struct application_t *s, void *data) {
   s->command_state = (struct command_state_t*)c;
 }
 
+static void* find_frames_by_pos(void *acc, void *i, void *s) {
+  struct mouse_click_t* p = s;
+  struct array_t* a = acc;
+  struct frame_t* f = i;
+  struct pos_t ps = {
+    .x = p->x,
+    .y = p->y
+  };
+
+  int x = frame_is_pos_inside(f, &ps);
+  if (x == 0) {
+    array_push(a, f);
+  }
+
+  return a;
+}
+
 static void
 mouse_released_execute(struct application_t *s, void *data) {
   struct selection_state_t* c = TO_SELECTION(s->command_state);
@@ -98,7 +117,7 @@ mouse_released_execute(struct application_t *s, void *data) {
 					  s->frames->dealloc);
   t = array_reduce(s->frames, find_frames_by_pos, t, data);
 
-  array_foreach(t, (array_mapper_t)print_frame);
+  array_foreach(t, (array_mapper_t)print_frame, NULL);
 
   gtk_widget_queue_draw(s->canvas);
 }
