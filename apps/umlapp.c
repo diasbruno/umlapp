@@ -49,21 +49,21 @@ static gboolean key_pressed(GtkEventControllerKey* self,
 			    gpointer state) {
   struct application_t* s = (struct application_t*)state;
 
-#define FINDER (command_option_by_shortname)
-  struct command_option_t* o = array_find(s->commands,
-					  (array_finder_t)FINDER,
-					  (void*)((intptr_t)keyval));
-#undef FINDER
-
   if (EXISTS(s->command)) {
     s->command->on_finish(s);
   }
+
+  struct command_option_t* o =
+    array_find(s->commands,
+	       command_option_by_shortname,
+	       (void*)((intptr_t)keyval));
 
   if (EXISTS(o)) {
     o->on_init(s);
     s->command = o;
     return TRUE;
   }
+
   return FALSE;
 }
 
@@ -163,28 +163,21 @@ static void activate (GtkApplication *app, gpointer state) {
   gtk_window_present (GTK_WINDOW (window));
 }
 
-void frame_free(struct frame_t* f) {
-  free(f);
-}
-
-struct array_t *frame_list_new(void) {
-  return array_new((array_dealloctor_t)frame_free);
-}
-
 int main(int argc, char **argv) {
   GtkApplication *app;
-  int status;
+  int status = 0;
 
-  state.frames = frame_list_new();
+  state.frames = array_new((array_dealloctor_t)frame_free);
   state.commands = array_new(null_free);
 
   register_creation_command_option(state.commands);
   register_selection_command_option(state.commands);
 
   app = gtk_application_new ("org.gtk.umlapp", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK (activate), (gpointer)&state);
+  g_signal_connect (app, "activate", G_CALLBACK(activate), (gpointer)&state);
+
   status = g_application_run(G_APPLICATION(app), argc, argv);
-  g_object_unref (app);
+  g_object_unref(app);
 
   array_free(state.frames);
 

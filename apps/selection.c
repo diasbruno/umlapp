@@ -46,8 +46,7 @@ static void draw(struct application_t *s, void* cr) {
 }
 
 static void
-key_execute(struct application_t *s, void *data) {
-}
+key_execute(struct application_t *s, void *data) {}
 
 static void
 motion_execute(struct application_t *s, void *data) {
@@ -117,7 +116,7 @@ mouse_released_execute(struct application_t *s, void *data) {
 					  s->frames->dealloc);
   t = array_reduce(s->frames, find_frames_by_pos, t, data);
 
-  array_foreach(t, (array_mapper_t)print_frame, NULL);
+  array_foreach(t, (array_foreach_t)frame_print, NULL);
 
   gtk_widget_queue_draw(s->canvas);
 }

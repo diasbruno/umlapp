@@ -1,6 +1,7 @@
 #ifndef _01G3PNB439F3BZPGR0R0VDF0YF_
 #define _01G3PNB439F3BZPGR0R0VDF0YF_ 1
 
+#include <stdbool.h>
 #include <collections/array.h>
 
 typedef struct application_t* application_t;
@@ -25,7 +26,7 @@ struct command_option_t {
   char pad;
 };
 
-struct command_option_t* command_option_by_shortname(void* command, void* s);
+bool command_option_by_shortname(array_item_t command, array_user_data_t s);
 
 void register_command_option(struct array_t* commands, struct command_option_t);
 

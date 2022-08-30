@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include "./array.h"
 
-struct array_t* array_new(array_dealloctor_t dealloc) {
+void null_free(void* x) {}
+
+struct array_t* array_newd(array_dealloctor_t dealloc) {
   struct array_t* a = malloc(sizeof(struct array_t));
   a->os = NULL;
   a->count = 0;
@@ -11,23 +13,23 @@ struct array_t* array_new(array_dealloctor_t dealloc) {
   return a;
 }
 
-struct array_t* array_with_capacity(int cap, array_dealloctor_t dealloc) {
-  struct array_t* a = malloc(sizeof(struct array_t));
-  a->os = malloc(sizeof(void*) * cap);
-  a->count = 0;
+struct array_t* array_new() {
+  return array_newd(null_free);
+}
+
+struct array_t* array_with_capacity(int cap,
+				    array_dealloctor_t dealloc) {
+  struct array_t* a = array_newd(dealloc);
   a->size = cap;
-  a->dealloc = dealloc;
   return a;
 }
 
 void array_free(struct array_t *a) {
   array_dealloctor_t dealloc = a->dealloc;
-  if (dealloc != NULL) {
-    for (int x = 0, s = a->count; x < s; x++) {
-      array_item_t i = a->os[x];
-      if (i != NULL) {
-	dealloc(i);
-      }
+  for (int x = 0, s = a->count; x < s; x++) {
+    array_item_t i = a->os[x];
+    if (i != NULL) {
+      dealloc(i);
     }
   }
   free(a->os);
@@ -41,20 +43,20 @@ static void array_resize(struct array_t* arr) {
 }
 
 void array_foreach(struct array_t *a,
-		   array_mapper_t mapper,
+		   array_foreach_t fun,
 		   array_user_data_t u) {
   for (int x = 0, s = a->count; x < s; x++) {
-    mapper(a->os[x], u);
+    fun(a->os[x], u);
   }
 }
 
 array_item_t
 array_find(struct array_t *a,
-	   array_finder_t finder,
+	   array_finder_t fun,
 	   array_user_data_t data) {
   for (int x = 0, s = a->count; x < s; x++) {
     array_item_t i = a->os[x];
-    if (finder(i, data) != 0) {
+    if (fun(i, data) != 0) {
       return i;
     }
   }
@@ -63,24 +65,24 @@ array_find(struct array_t *a,
 
 array_reducer_acc_t
 array_reduce(struct array_t* a,
-	     array_reducer_t reducer,
+	     array_reducer_t fun,
 	     array_reducer_acc_t i,
 	     array_user_data_t data) {
   array_reducer_acc_t r = i;
   for (int x = 0, s = a->count; x < s; x++) {
-    r = reducer(r, a->os[x], data);
+    r = fun(r, a->os[x], data);
   }
   return r;
 }
 
 array_reducer_acc_t
 array_reduce_indexed(struct array_t* a,
-		     array_reducer_indexed_t reducer,
+		     array_reducer_indexed_t fun,
 		     array_reducer_acc_t i,
 		     array_user_data_t data) {
   array_reducer_acc_t r = i;
   for (int x = 0, s = a->count; x < s; x++) {
-    r = reducer(r, a->os[x], x, data);
+    r = fun(r, a->os[x], x, data);
   }
   return r;
 }
@@ -96,5 +98,3 @@ void array_push(struct array_t* a, array_item_t e) {
 array_item_t array_at(struct array_t* a, int p) {
   return a->os[p];
 }
-
-void null_free(void* x) {}

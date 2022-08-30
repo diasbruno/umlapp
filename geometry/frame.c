@@ -15,6 +15,10 @@ struct frame_t* frame_with_pos_size(float x, float y, float w, float h) {
   return f;
 }
 
+void frame_free(struct frame_t* f) {
+  free(f);
+}
+
 int frame_is_pos_inside(struct frame_t* f, struct pos_t *pos) {
   struct pos_t* p = &f->pos;
   struct size_t* s = &f->size;
@@ -29,7 +33,7 @@ int frame_is_frame_inside(struct frame_t *a, struct frame_t *b) {
 	  a->size.height >= b->size.height);
 }
 
-void print_frame(struct frame_t* f) {
+void frame_print(struct frame_t* f) {
   printf("frame(%f, %f, %f, %f)\n",
 	 f->pos.x, f->pos.y,
 	 f->size.width, f->size.height);

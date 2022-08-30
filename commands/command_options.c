@@ -1,14 +1,9 @@
+#include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include "./command_options.h"
 
-struct command_option_t* command_option_by_shortname(void* command, void* s) {
+bool command_option_by_shortname(array_item_t command, array_user_data_t s) {
   struct command_option_t* x = command;
   char n = (char)((intptr_t)s);
-
-  if (x->shortname == n) {
-    return x;
-  }
-
-  return NULL;
+  return x->shortname == n;
 }

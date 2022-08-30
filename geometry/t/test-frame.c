@@ -10,7 +10,7 @@ void test_frame_new(void) {
   assert(f->size.width == 0);
   assert(f->size.height == 0);
 
-  free(f);
+  frame_free(f);
 }
 
 void test_frame_with_pos_size(void) {
@@ -21,7 +21,7 @@ void test_frame_with_pos_size(void) {
   assert(f->size.width == 3);
   assert(f->size.height == 4);
 
-  free(f);
+  frame_free(f);
 }
 
 void test_frame_is_pos_inside_is(void) {
@@ -30,7 +30,7 @@ void test_frame_is_pos_inside_is(void) {
 
   assert(frame_is_pos_inside(f, &p) == 1);
 
-  free(f);
+  frame_free(f);
 }
 
 void test_frame_is_pos_inside_isnt(void) {
@@ -39,7 +39,7 @@ void test_frame_is_pos_inside_isnt(void) {
 
   assert(frame_is_pos_inside(f, &p) == 0);
 
-  free(f);
+  frame_free(f);
 }
 
 void test_frame_is_frame_inside_is(void) {
@@ -48,7 +48,7 @@ void test_frame_is_frame_inside_is(void) {
 
   assert(frame_is_frame_inside(a, b) == 1);
 
-  free(a), free(b);
+  frame_free(a), frame_free(b);
 }
 
 void test_frame_is_frame_inside_isnt(void) {
@@ -57,7 +57,7 @@ void test_frame_is_frame_inside_isnt(void) {
 
   assert(frame_is_frame_inside(a, b) == 0);
 
-  free(a), free(b);
+  frame_free(a), frame_free(b);
 }
 
 int main(void) {
