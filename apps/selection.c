@@ -1,7 +1,5 @@
 #include <cairo.h>
 #include <base/type.h>
-#include <collections/array.h>
-#include <geometry/frame.h>
 #include <commands/command_options.h>
 
 #include "./application_state.h"
@@ -9,25 +7,23 @@
 
 #define TO_SELECTION(x) ((struct selection_state_t*)(x))
 
-struct selection_state_t {
-  struct pos_t start;
-  struct pos_t end;
-  int selecting;
-};
-
-static inline struct selection_state_t* state_new(void) {
+static inline struct selection_state_t*
+state_new(void) {
   return malloc(sizeof(struct selection_state_t));
 }
 
-static void init(struct application_t *s) {
+static void
+init(struct application_t *s) {
   s->command_state = (struct command_state_t*)state_new();
 }
 
-static void finish(struct application_t *s) {
+static void
+finish(struct application_t *s) {
   free((struct selection_state_t*)s->command_state);
 }
 
-static void draw(struct application_t *s, void* cr) {
+static void
+draw(struct application_t *s, void* cr) {
   struct selection_state_t* c = TO_SELECTION(s->command_state);
 
   cairo_save(cr);
@@ -39,7 +35,8 @@ static void draw(struct application_t *s, void* cr) {
   cairo_restore(cr);
 }
 
-static void key_execute(struct application_t *s, void *data) {}
+static void
+key_execute(struct application_t *s, void *data) {}
 
 static void
 motion_execute(struct application_t *s, void *data) {
@@ -71,7 +68,8 @@ mouse_pressed_execute(struct application_t *s, void *data) {
   c->end.y = p->y;
 }
 
-static array_item_t find_frames_by_pos(array_reducer_acc_t acc,
+static array_item_t
+find_frames_by_pos(array_reducer_acc_t acc,
 				       array_item_t i,
 				       array_user_data_t s) {
   struct mouse_click_t* p = s;
@@ -115,6 +113,7 @@ static struct command_option_t opt = {
   's'
 };
 
-void register_selection_command_option(struct array_t* a) {
+void
+register_selection_command_option(struct array_t* a) {
   array_push(a, &opt);
 }
