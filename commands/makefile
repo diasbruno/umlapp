@@ -3,6 +3,7 @@ PROJECT=commands
 OUTPUT=lib$(PROJECT).a
 
 CFLAGS = -Wall -Werror
+CFLAGS+= $(shell pkg-config --cflags gtk4)
 CFLAGS+= -I ../ -I ./
 
 SOURCES=$(wildcard *.c)

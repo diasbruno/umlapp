@@ -4,11 +4,11 @@
 #include <geometry/frame.h>
 #include <collections/array.h>
 
-struct selection_state_t {
+typedef struct selection_state_t {
   struct pos_t start;
   struct pos_t end;
   int selecting;
-};
+} selection_state_t;
 
 void register_selection_command_option(struct array_t* a);
 

@@ -3,7 +3,7 @@ PROJECT=collections
 OUTPUT=lib$(PROJECT).a
 
 CFLAGS= -Wall -Werror
-CFLAGS+= -I ./
+CFLAGS+= -I ./ -I ./..
 
 SOURCES=$(wildcard *.c)
 OBJECTS=$(SOURCES:%.c=%.o)

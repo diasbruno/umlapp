@@ -6,16 +6,14 @@
 #include <collections/array.h>
 #include <commands/command_options.h>
 
-typedef struct command_state_t* command_state_t;
-
-struct application_t {
-  struct command_option_t* command;
-  command_state_t command_state;
-  struct array_t* commands;
-  struct array_t* selected;
-  struct array_t* objects;
-  struct array_t* frames;
+typedef struct application_t {
+  command_option_t* command;
+  any command_state;
+  array_t* commands;
+  array_t* selected;
+  array_t* objects;
+  array_t* frames;
   GtkWidget* canvas;
-};
+} application_t;
 
 #endif

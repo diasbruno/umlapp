@@ -1,9 +1,11 @@
+#define __USE_XOPEN 1
 #include <math.h>
+#include <stdio.h>
 #include <cairo.h>
 
 #include "./drawing.h"
 
-void draw_decision(cairo_t *cr, struct frame_t* frame) {
+void draw_decision(cairo_t *cr, frame_t* frame) {
   const float x = frame->pos.x;
   const float y = frame->pos.y;
   const float w = frame->size.width;
@@ -22,13 +24,14 @@ void draw_decision(cairo_t *cr, struct frame_t* frame) {
   cairo_restore(cr);
 }
 
-void draw_arrow(cairo_t *cr, struct line_t *ls) {
-  struct pos_t p = ls->ps[0];
+void draw_arrow(cairo_t *cr, line_t *ls) {
+  pos_t p = ls->ps[0];
   cairo_save(cr);
   cairo_set_source_rgb(cr, 0, 1, 0);
   cairo_line_to(cr, p.x, p.y);
+
   for (int x = 0; x < ls->size; x++) {
-    struct pos_t l = ls->ps[x];
+    pos_t l = ls->ps[x];
     printf("arrow %f %f\n", l.x, l.y);
     cairo_line_to(cr, l.x, l.y);
   }
@@ -37,7 +40,7 @@ void draw_arrow(cairo_t *cr, struct line_t *ls) {
   cairo_restore(cr);
 }
 
-void draw_box(cairo_t *cr, struct frame_t *frame) {
+void draw_box(cairo_t *cr, frame_t *frame) {
   cairo_save(cr);
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_rectangle(cr,
@@ -47,7 +50,7 @@ void draw_box(cairo_t *cr, struct frame_t *frame) {
   cairo_restore(cr);
 }
 
-void draw_rounded_box(cairo_t *cr, struct frame_t *frame) {
+void draw_rounded_box(cairo_t *cr, frame_t *frame) {
   double
     x             = frame->pos.x,        /* parameters like cairo_rectangle */
     y             = frame->pos.y,
@@ -57,7 +60,7 @@ void draw_rounded_box(cairo_t *cr, struct frame_t *frame) {
     corner_radius = height / 10.0;
 
   double radius = corner_radius / aspect;
-  double degrees = G_PI / 180.0;
+  double degrees = M_PI / 180.0;
 
   cairo_save(cr);
   cairo_set_source_rgb(cr, 0, 0, 0);

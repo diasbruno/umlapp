@@ -2,10 +2,11 @@
 #include <cairo.h>
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
+#include <base/type.h>
 #include <collections/array.h>
 #include <geometry/frame.h>
+#include <mouse/type.h>
 #include <render/drawing.h>
-#include <base/type.h>
 
 #include "./application_state.h"
 #include "./creation.h"
@@ -16,7 +17,7 @@ const gchar* const kMotion = (const gchar*)"motion";
 const gchar* const kMousePress = (const gchar*)"pressed";
 const gchar* const kMousePressReleased = (const gchar*)"released";
 
-static struct application_t state = {
+static application_t state = {
   .command = NULL,
   .commands = NULL,
   .selected = NULL,
@@ -30,10 +31,10 @@ static void draw_function(GtkDrawingArea *area,
 			  int width,
 			  int height,
 			  gpointer state) {
-  struct application_t* s = (struct application_t*)state;
+  application_t* s = state;
 
   for (int x = 0; x < s->frames->count; x++) {
-    struct frame_t* f = array_at(s->frames, x);
+    frame_t* f = array_at(s->frames, x);
     draw_rounded_box(cr, f);
   }
 
@@ -47,16 +48,16 @@ static gboolean key_pressed(GtkEventControllerKey* self,
 			    guint keycode,
 			    GdkModifierType mod,
 			    gpointer state) {
-  struct application_t* s = (struct application_t*)state;
+  application_t* s = state;
 
   if (EXISTS(s->command)) {
     s->command->on_finish(s);
   }
 
-  struct command_option_t* o =
+  command_option_t* o =
     array_find(s->commands,
 	       command_option_by_shortname,
-	       (void*)((intptr_t)keyval));
+	       (any)((intptr_t)keyval));
 
   if (EXISTS(o)) {
     o->on_init(s);
@@ -72,9 +73,9 @@ static void motion(GtkEventControllerMotion* self,
 		   gdouble y,
 		   gpointer state
 		   ) {
-  struct application_t* s = (struct application_t*)state;
+  application_t* s = state;
 
-  struct mouse_click_t motion = {
+  mouse_click_t motion = {
     .n_press = 0,
     .x = x,
     .y = y,
@@ -91,9 +92,9 @@ static void mouse_pressed(GtkGestureClick *self,
 			  gdouble x,
 			  gdouble y,
 			  gpointer state) {
-  struct application_t* s = (struct application_t*)state;
+  application_t* s = state;
 
-  struct mouse_click_t press = {
+  mouse_click_t press = {
     .n_press = n_press,
     .x = x,
     .y = y,
@@ -110,9 +111,9 @@ static void mouse_released(GtkGestureClick *self,
 			   gdouble x,
 			   gdouble y,
 			   gpointer state) {
-  struct application_t* s = (struct application_t*)state;
+  application_t* s = state;
 
-  struct mouse_click_t released = {
+  mouse_click_t released = {
     .n_press = n_press,
       .x = x,
       .y = y,
@@ -125,7 +126,7 @@ static void mouse_released(GtkGestureClick *self,
 }
 
 static void activate (GtkApplication *app, gpointer state) {
-  struct application_t* s = (struct application_t*)state;
+  application_t* s = state;
 
   // create the main window
   GtkWidget *window = gtk_application_window_new (app);

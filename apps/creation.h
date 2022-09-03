@@ -6,6 +6,6 @@
 #define DEFAULT_OBJECT_WIDTH 100
 #define DEFAULT_OBJECT_HEIGHT 100
 
-void register_creation_command_option(struct array_t* a);
+void register_creation_command_option(array_t* a);
 
 #endif
