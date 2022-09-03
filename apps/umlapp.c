@@ -186,6 +186,7 @@ int main(int argc, char **argv) {
   g_object_unref(app);
 
   array_free(state.frames);
+  array_free(state.commands);
 
   return status;
 }
