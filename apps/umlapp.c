@@ -14,7 +14,7 @@
 const gchar* const kKeyPress = (const gchar*)"key-pressed";
 const gchar* const kMotion = (const gchar*)"motion";
 const gchar* const kMousePress = (const gchar*)"pressed";
-const gchar* const kMousePressReleased = (const gchar*)"pressed";
+const gchar* const kMousePressReleased = (const gchar*)"released";
 
 static struct application_t state = {
   .command = NULL,
