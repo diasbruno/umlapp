@@ -111,7 +111,7 @@ void test_array_foreach(void) {
 
   int res = 0;
 
-  array_foreach(a, (array_mapper_t)foreach_mapper, &res);
+  array_foreach(a, (array_foreach_t)foreach_mapper, &res);
 
   assert(res == 3);
 
