@@ -12,6 +12,8 @@
 #include "./creation.h"
 #include "./selection.h"
 
+const gchar* const kAppNamespace = (const gchar*)"io.github.diasbruno.umlapp";
+const gchar* const kAppActivate = (const gchar*)"activate";
 const gchar* const kKeyPress = (const gchar*)"key-pressed";
 const gchar* const kMotion = (const gchar*)"motion";
 const gchar* const kMousePress = (const gchar*)"pressed";
@@ -174,8 +176,8 @@ int main(int argc, char **argv) {
   register_creation_command_option(state.commands);
   register_selection_command_option(state.commands);
 
-  app = gtk_application_new ("org.gtk.umlapp", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK(activate), (gpointer)&state);
+  app = gtk_application_new(kAppNamespace, G_APPLICATION_FLAGS_NONE);
+  g_signal_connect(app, kAppActivate, G_CALLBACK(activate), (gpointer)&state);
 
   status = g_application_run(G_APPLICATION(app), argc, argv);
   g_object_unref(app);
