@@ -58,6 +58,7 @@ static gboolean key_pressed(GtkEventControllerKey* self,
 
   if (EXISTS(s->command)) {
     s->command->on_finish(s);
+    s->command = NO_COMMAND;
   }
 
   command_option_t* o =

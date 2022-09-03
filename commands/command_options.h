@@ -5,6 +5,8 @@
 #include <base/type.h>
 #include <collections/array.h>
 
+#define NO_COMMAND (NULL)
+
 typedef void (*command_option_draw_fn_t)(any s, any cr);
 typedef void (*command_option_init_fn_t)(any s);
 typedef void (*command_option_finish_fn_t)(any s);
