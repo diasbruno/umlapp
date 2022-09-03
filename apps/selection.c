@@ -15,26 +15,20 @@ struct selection_state_t {
   int selecting;
 };
 
-static struct selection_state_t*
-state_new(void) {
+static inline struct selection_state_t* state_new(void) {
   return malloc(sizeof(struct selection_state_t));
 }
 
 static void init(struct application_t *s) {
-  g_print("selection init\n");
+  s->command_state = (struct command_state_t*)state_new();
 }
 
 static void finish(struct application_t *s) {
-  g_print("selection finish\n");
   free((struct selection_state_t*)s->command_state);
 }
 
 static void draw(struct application_t *s, void* cr) {
   struct selection_state_t* c = TO_SELECTION(s->command_state);
-
-  if (!EXISTS(c)) {
-    return;
-  }
 
   cairo_save(cr);
   cairo_set_source_rgb(cr, 0, 0, 1);
@@ -45,14 +39,13 @@ static void draw(struct application_t *s, void* cr) {
   cairo_restore(cr);
 }
 
-static void
-key_execute(struct application_t *s, void *data) {}
+static void key_execute(struct application_t *s, void *data) {}
 
 static void
 motion_execute(struct application_t *s, void *data) {
   struct selection_state_t* c = TO_SELECTION(s->command_state);
 
-  if (!EXISTS(c) || c->selecting == 0) {
+  if (c->selecting == 0) {
     return;
   }
 
@@ -64,16 +57,11 @@ motion_execute(struct application_t *s, void *data) {
   gtk_widget_queue_draw(s->canvas);
 }
 
-
 static void
 mouse_pressed_execute(struct application_t *s, void *data) {
   struct mouse_click_t* p = data;
 
   struct selection_state_t* c = TO_SELECTION(s->command_state);
-
-  if (!EXISTS(c)) {
-    c = state_new();
-  }
 
   c->selecting = 1;
 
@@ -81,11 +69,11 @@ mouse_pressed_execute(struct application_t *s, void *data) {
   c->start.y = p->y;
   c->end.x = p->x;
   c->end.y = p->y;
-
-  s->command_state = (struct command_state_t*)c;
 }
 
-static void* find_frames_by_pos(void *acc, void *i, void *s) {
+static array_item_t find_frames_by_pos(array_reducer_acc_t acc,
+				       array_item_t i,
+				       array_user_data_t s) {
   struct mouse_click_t* p = s;
   struct array_t* a = acc;
   struct frame_t* f = i;
@@ -94,8 +82,7 @@ static void* find_frames_by_pos(void *acc, void *i, void *s) {
     .y = p->y
   };
 
-  int x = frame_is_pos_inside(f, &ps);
-  if (x == 0) {
+  if (frame_is_pos_inside(f, &ps) == true) {
     array_push(a, f);
   }
 
@@ -106,17 +93,12 @@ static void
 mouse_released_execute(struct application_t *s, void *data) {
   struct selection_state_t* c = TO_SELECTION(s->command_state);
 
-  if (!EXISTS(c)) {
-    return;
-  }
-
   c->selecting = 0;
 
   struct array_t* t = array_with_capacity(s->frames->count,
 					  s->frames->dealloc);
-  t = array_reduce(s->frames, find_frames_by_pos, t, data);
-
-  array_foreach(t, (array_foreach_t)frame_print, NULL);
+  s->selected =
+    array_reduce(s->frames, find_frames_by_pos, t, data);
 
   gtk_widget_queue_draw(s->canvas);
 }
