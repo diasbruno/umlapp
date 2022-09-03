@@ -45,6 +45,10 @@ static void draw_function(GtkDrawingArea *area,
   }
 }
 
+static inline array_item_t find_command(array_t* c, any key) {
+  return array_find(c, command_option_by_shortname, key);
+}
+
 static gboolean key_pressed(GtkEventControllerKey* self,
 			    guint keyval,
 			    guint keycode,
@@ -57,9 +61,7 @@ static gboolean key_pressed(GtkEventControllerKey* self,
   }
 
   command_option_t* o =
-    array_find(s->commands,
-	       command_option_by_shortname,
-	       (any)((intptr_t)keyval));
+    find_command(s->commands, (any)(intptr_t)keyval);
 
   if (EXISTS(o)) {
     o->on_init(s);
